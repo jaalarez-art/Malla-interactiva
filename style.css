@@ -72,3 +72,12 @@ h1 {
 .ramo:hover.desbloqueado {
   filter: brightness(1.1);
 }
+.anio {
+  margin-bottom: 40px;
+}
+
+.fila-semestres {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
