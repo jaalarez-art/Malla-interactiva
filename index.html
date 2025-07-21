@@ -7,12 +7,22 @@
 </head>
 <body>
 
-  <h1>Primer año</h1>
+  <h1>Malla Curricular Interactiva - Tecnología Médica</h1>
 
-  <div id="malla-container" class="dos-columnas">
-    <!-- Aquí se inyectarán los semestres -->
+  <!-- 🔘 Botón de reinicio -->
+  <div style="text-align: center; margin-bottom: 15px;">
+    <button id="btnReiniciar">Reiniciar malla</button>
   </div>
 
+  <!-- 📊 Barra de progreso -->
+  <div class="barra-container">
+    <div class="barra" id="barra">0%</div>
+  </div>
+
+  <!-- 📚 Contenedor de la malla -->
+  <div id="malla-container"></div>
+
   <script src="script.js" defer></script>
+
 </body>
 </html>
