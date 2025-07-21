@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<title>Prueba Malla Curricular</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background: #fff0f6;
+    color: #3a1a2b;
+  }
+  .ano {
+    margin-bottom: 40px;
+  }
+  .ano h2 {
+    text-align: center;
+    font-size: 22px;
+    margin-bottom: 15px;
+    color: #62145e;
+  }
+  .columnas-semestres {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  .semestre {
+    flex: 1 1 45%;
+    min-width: 280px;
+    background: #f7a8c4;
+    border-radius: 15px;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(214, 51, 132, 0.3);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .semestre h3 {
+    margin: 5px 0 10px 0;
+    text-align: center;
+    font-weight: 700;
+    color: #62145e;
+  }
+  .ramo {
+    padding: 8px;
+    background: #d63384;
+    color: white;
+    border-radius: 5px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div id="malla-container"></div>
+
+<script>
+const malla = {
+  'Primer año - Primer semestre': [
+    { id: 'anatomia_humana', nombre: 'Anatomía humana', prereq: [] },
+    { id: 'biologia_celular', nombre: 'Biología celular', prereq: [] }
+  ],
+  'Primer año - Segundo semestre': [
+    { id: 'histoembriologia', nombre: 'Histoembriología', prereq: ['anatomia_humana'] },
+    { id: 'fisica_general', nombre: 'Física general', prereq: [] }
+  ],
+  'Segundo año - Tercer semestre': [
+    { id: 'fisiologia_humana', nombre: 'Fisiología humana', prereq: [] }
+  ]
+};
+
+function actualizarMalla() {
+  const container = document.getElementById('malla-container');
+  container.innerHTML = '';
+
+  const anos = {};
+
+  for (const semestre in malla) {
+    const ano = semestre.split(' - ')[0];
+    if (!anos[ano]) anos[ano] = [];
+    anos[ano].push({ nombre: semestre, ramos: malla[semestre] });
+  }
+
+  for (const ano in anos) {
+    const divAno = document.createElement('div');
+    divAno.classList.add('ano');
+
+    const tituloAno = document.createElement('h2');
+    tituloAno.textContent = ano;
+    divAno.appendChild(tituloAno);
+
+    const columnas = document.createElement('div');
+    columnas.classList.add('columnas-semestres');
+
+    anos[ano].forEach(semestreObj => {
+      const divSemestre = document.createElement('div');
+      divSemestre.classList.add('semestre');
+
+      const tituloSemestre = document.createElement('h3');
+      tituloSemestre.textContent = semestreObj.nombre;
+      divSemestre.appendChild(tituloSemestre);
+
+      semestreObj.ramos.forEach(ramo => {
+        const divRamo = document.createElement('div');
+        divRamo.textContent = ramo.nombre;
+        divRamo.classList.add('ramo');
+        divSemestre.appendChild(divRamo);
+      });
+
+      columnas.appendChild(divSemestre);
+    });
+
+    divAno.appendChild(columnas);
+    container.appendChild(divAno);
+  }
+}
+
+actualizarMalla();
+</script>
+
+</body>
+</html>
