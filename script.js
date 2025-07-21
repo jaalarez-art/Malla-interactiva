@@ -1,77 +1,99 @@
 const malla = {
-  'Primer año - Primer semestre': [
-    { id: 'anatomia_humana', nombre: 'Anatomía humana', prereq: [] },
-    { id: 'biologia_celular', nombre: 'Biología celular', prereq: [] },
-    { id: 'lab_bio_celular', nombre: 'Laboratorio de biología celular', prereq: [] },
-    { id: 'quimica_general', nombre: 'Química general', prereq: [] },
-    { id: 'intro_tec_med', nombre: 'Introducción a la tecnología médica', prereq: [] },
-    { id: 'algebra_calculo', nombre: 'Elementos de álgebra y cálculo', prereq: [] }
-  ],
-  'Primer año - Segundo semestre': [
-    { id: 'histoembriologia', nombre: 'Histoembriología', prereq: ['anatomia_humana', 'biologia_celular'] },
-    { id: 'fisica_general', nombre: 'Física general', prereq: ['algebra_calculo'] },
-    { id: 'quimica_organica', nombre: 'Química orgánica', prereq: [] },
-    { id: 'ingles_1', nombre: 'Inglés I', prereq: [] },
-    { id: 'habilidades_comunicativas', nombre: 'Habilidades comunicativas', prereq: [] }
-  ]
+  'Primer año': {
+    'Primer semestre': [
+      { nombre: 'Anatomía humana', desbloqueado: true },
+      { nombre: 'Biología celular', desbloqueado: true },
+      { nombre: 'Laboratorio de biología celular', desbloqueado: true },
+      { nombre: 'Química general', desbloqueado: true },
+      { nombre: 'Introducción a la tecnología médica', desbloqueado: true },
+      { nombre: 'Álgebra y cálculo', desbloqueado: true },
+    ],
+    'Segundo semestre': [
+      { nombre: 'Histoembriología', desbloqueado: false },
+      { nombre: 'Física general', desbloqueado: false },
+      { nombre: 'Química orgánica', desbloqueado: true },
+      { nombre: 'Inglés I', desbloqueado: true },
+      { nombre: 'Habilidades comunicativas', desbloqueado: true },
+    ]
+  },
+  'Segundo año': {
+    'Tercer semestre': [
+      { nombre: 'Fisiología humana', desbloqueado: false },
+      { nombre: 'Bioquímica', desbloqueado: false },
+      { nombre: 'Bioética', desbloqueado: false },
+      { nombre: 'Infectología', desbloqueado: false },
+      { nombre: 'Inglés II', desbloqueado: false },
+      { nombre: 'Razonamiento científico', desbloqueado: false },
+    ],
+    'Cuarto semestre': [
+      { nombre: 'Fisiopatología', desbloqueado: false },
+      { nombre: 'Farmacología general', desbloqueado: false },
+      { nombre: 'Inglés III', desbloqueado: false },
+      { nombre: 'Protección radiológica', desbloqueado: false },
+      { nombre: 'Radiodiagnóstico I', desbloqueado: false },
+      { nombre: 'Física electromagnética', desbloqueado: false },
+    ]
+  }
+  // Agrega más años si quieres
 };
 
-let estado = JSON.parse(localStorage.getItem('mallaEstado')) || {};
+const contenedor = document.getElementById("malla-container");
+const barra = document.getElementById("barra");
+const btnReiniciar = document.getElementById("btnReiniciar");
 
-function guardarEstado() {
-  localStorage.setItem('mallaEstado', JSON.stringify(estado));
-}
+function cargarMalla() {
+  contenedor.innerHTML = "";
+  let totalRamos = 0;
+  let completados = 0;
 
-function puedeDesbloquear(ramo) {
-  return ramo.prereq.every(pr => estado[pr]);
-}
+  for (const [anio, semestres] of Object.entries(malla)) {
+    const divAnio = document.createElement("div");
+    const h2 = document.createElement("h2");
+    h2.textContent = anio;
+    divAnio.appendChild(h2);
+    divAnio.classList.add("anio");
 
-function crearTarjeta(ramo) {
-  const div = document.createElement('div');
-  div.id = ramo.id;
-  div.textContent = ramo.nombre;
-  div.classList.add('ramo');
+    const filaSemestres = document.createElement("div");
+    filaSemestres.classList.add("fila-semestres");
 
-  if (estado[ramo.id]) {
-    div.classList.add('aprobado');
-  } else if (puedeDesbloquear(ramo)) {
-    div.classList.add('desbloqueado');
-    div.addEventListener('click', () => {
-      aprobarRamo(ramo.id);
-    });
-  } else {
-    div.classList.add('bloqueado');
+    for (const [nombreSemestre, ramos] of Object.entries(semestres)) {
+      const divSemestre = document.createElement("div");
+      divSemestre.classList.add("semestre");
+
+      const h3 = document.createElement("h3");
+      h3.textContent = nombreSemestre;
+      divSemestre.appendChild(h3);
+
+      for (const ramo of ramos) {
+        totalRamos++;
+        const divRamo = document.createElement("div");
+        divRamo.classList.add("ramo", ramo.desbloqueado ? "desbloqueado" : "bloqueado");
+        divRamo.textContent = ramo.nombre;
+        if (ramo.desbloqueado) completados++;
+        divSemestre.appendChild(divRamo);
+      }
+
+      filaSemestres.appendChild(divSemestre);
+    }
+
+    divAnio.appendChild(filaSemestres);
+    contenedor.appendChild(divAnio);
   }
 
-  return div;
+  const porcentaje = Math.round((completados / totalRamos) * 100);
+  barra.style.width = porcentaje + "%";
+  barra.textContent = porcentaje + "%";
 }
 
-function aprobarRamo(id) {
-  estado[id] = true;
-  guardarEstado();
-  actualizarMalla();
-}
+btnReiniciar.addEventListener("click", () => {
+  for (const anio of Object.values(malla)) {
+    for (const semestres of Object.values(anio)) {
+      for (const ramo of semestres) {
+        ramo.desbloqueado = false;
+      }
+    }
+  }
+  cargarMalla();
+});
 
-function actualizarMalla() {
-  const container = document.getElementById('malla-container');
-  container.innerHTML = '';
-
-  // Solo mostrar los semestres del primer año
-  ['Primer año - Primer semestre', 'Primer año - Segundo semestre'].forEach(semestre => {
-    const divSemestre = document.createElement('div');
-    divSemestre.classList.add('semestre');
-
-    const titulo = document.createElement('h3');
-    titulo.textContent = semestre;
-    divSemestre.appendChild(titulo);
-
-    malla[semestre].forEach(ramo => {
-      const tarjeta = crearTarjeta(ramo);
-      divSemestre.appendChild(tarjeta);
-    });
-
-    container.appendChild(divSemestre);
-  });
-}
-
-actualizarMalla();
+cargarMalla();
