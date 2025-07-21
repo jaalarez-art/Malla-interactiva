@@ -34,7 +34,6 @@ const malla = {
       { nombre: 'Física electromagnética', desbloqueado: false },
     ]
   }
-  // Agrega más años si quieres
 };
 
 const contenedor = document.getElementById("malla-container");
@@ -48,20 +47,21 @@ function cargarMalla() {
 
   for (const [anio, semestres] of Object.entries(malla)) {
     const divAnio = document.createElement("div");
+    divAnio.classList.add("anio");
+
     const h2 = document.createElement("h2");
     h2.textContent = anio;
     divAnio.appendChild(h2);
-    divAnio.classList.add("anio");
 
-    const filaSemestres = document.createElement("div");
-    filaSemestres.classList.add("fila-semestres");
+    const fila = document.createElement("div");
+    fila.classList.add("fila-semestres");
 
-    for (const [nombreSemestre, ramos] of Object.entries(semestres)) {
+    for (const [semestre, ramos] of Object.entries(semestres)) {
       const divSemestre = document.createElement("div");
       divSemestre.classList.add("semestre");
 
       const h3 = document.createElement("h3");
-      h3.textContent = nombreSemestre;
+      h3.textContent = semestre;
       divSemestre.appendChild(h3);
 
       for (const ramo of ramos) {
@@ -69,14 +69,14 @@ function cargarMalla() {
         const divRamo = document.createElement("div");
         divRamo.classList.add("ramo", ramo.desbloqueado ? "desbloqueado" : "bloqueado");
         divRamo.textContent = ramo.nombre;
-        if (ramo.desbloqueado) completados++;
         divSemestre.appendChild(divRamo);
+        if (ramo.desbloqueado) completados++;
       }
 
-      filaSemestres.appendChild(divSemestre);
+      fila.appendChild(divSemestre);
     }
 
-    divAnio.appendChild(filaSemestres);
+    divAnio.appendChild(fila);
     contenedor.appendChild(divAnio);
   }
 
